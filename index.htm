@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=1024, initial-scale=1.0">
+    <title>Crypto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+</head>
+<body>
+    <!-- <h1>hello world</h1> -->
+    <div class="container1">
+        <div class="coin-search">
+            <input type="text" class="coin-input" placeholder="Search">
+        </div>
+        <div class="coin-container">
+            
+        </div>
+    </div>
+
+    <div class="mydiv">
+  <ul>
+    <!-- <li><a href="https://twitter.com">Twitter</a></li> -->
+    <!-- <li><a href="https://codepen.io/julesforrest">Codepen</a></li> -->
+    <!-- <li><a href="mailto:arashomranpour@gmail.com">Email</a></li> -->
+    <li><a href="https://instagram.com/arash_omranpour">Instagram</a></li>
+    <li><a href="https://github.com/Arashomranpour">Github</a></li>
+    <li>
+      <p>👋</p>
+    </li>
+  </ul>
+</div>
+</body>
+<script >
+    const coincontainer = document.querySelector('.coin-container')
+const searchinput = document.querySelector('.coin-input')
+let search_term = ""
+let data = []
+searchinput.addEventListener('input', e => {
+    search_term = e.target.value;
+    filtersearch()
+})
+
+
+fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false').then(response => response.json())
+    .then(res => {
+        data = res
+        res.map(data => addtodom(data))
+    })
+function addtodom(data) {
+    const coinrow = document.createElement("div")
+    coinrow.classList.add("coin-row")
+    const imageelemnt = document.createElement("img")
+    imageelemnt.classList.add("coin-image")
+    imageelemnt.setAttribute("src", data.image)
+    imageelemnt.setAttribute("alt", data.name)
+    coinrow.appendChild(imageelemnt)
+    const nameelement = document.createElement("p")
+    nameelement.classList.add("coin-name")
+    nameelement.innerText = data.name;
+    coinrow.appendChild(nameelement)
+    const symbolelement = document.createElement('p')
+    symbolelement.classList.add("coin-symb")
+    symbolelement.innerText = data.symbol;
+    coinrow.appendChild(symbolelement)
+    //data
+    const coindata = document.createElement('div')
+    coindata.classList.add('coin-data')
+    const coinprice = document.createElement('p')
+    coinprice.classList.add('coin-price')
+    coinprice.innerText = `$${data.current_price}`
+    const coinvlo = document.createElement('p')
+    coinvlo.classList.add("coin-vlo")
+    coinvlo.innerText = `$${data.total_volume.toLocaleString()}`
+    const coinper = document.createElement('p')
+    coinper.classList.add('coinper')
+    data.price_change_24h > 0 ? coinper.classList.add("green") : coinper.classList.add("red")
+    coinper.innerText = `$${data.price_change_24h.toFixed(5)}%`
+
+    const market = document.createElement('p')
+    market.classList.add("market")
+    market.innerText = `Mkt cap${data.market_cap_change_24h.toLocaleString()}`
+
+
+    coindata.appendChild(coinprice)
+    coindata.appendChild(coinvlo)
+    coindata.appendChild(coinper)
+    coindata.appendChild(market)
+    coinrow.appendChild(coindata)
+    coincontainer.appendChild(coinrow)
+
+
+}
+
+
+
+const filtersearch = () => {
+    const container = document.querySelector(".coin-container")
+    container.innerHTML = ''
+    data.filter(item => item.name.toLowerCase().includes(search_term.toLowerCase())).forEach(item => addtodom(item))
+
+}
+
+
+</script>
+</html>
